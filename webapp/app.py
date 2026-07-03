@@ -4,7 +4,7 @@ import joblib
 import pandas as pd
 import sys
 from datetime import datetime, timezone
-from extensions import db
+from .extensions import db
 
 import db_model
 
