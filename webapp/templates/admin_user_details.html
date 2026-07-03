@@ -1,0 +1,359 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+<!-- HEADER -->
+
+<div class="card shadow mb-4">
+<div class="card-body bg-dark text-white">
+<h2>Admin Dashboard • User Details</h2>
+</div>
+</div>
+
+
+<!-- ================= USER INFO ================= -->
+
+<div class="card shadow mb-4">
+<div class="card-body">
+
+<h4 class="mb-3">User Information</h4>
+
+<p><b>ID:</b> {{ user.id }}</p>
+<p><b>Email:</b> {{ user.email }}</p>
+<p><b>Role:</b> {{ user.role }}</p>
+
+</div>
+</div>
+
+
+<!-- ================= SUMMARY STATS ================= -->
+
+<div class="row mb-4">
+
+<div class="col-md-3">
+<div class="card shadow text-center">
+<div class="card-body">
+<h5>Total Transactions</h5>
+<h3>{{ transactions|length }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow text-center">
+<div class="card-body">
+<h5>Fraud Transactions</h5>
+<h3 class="text-danger">{{ fraud_count }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow text-center">
+<div class="card-body">
+<h5>Safe Transactions</h5>
+<h3 class="text-success">{{ safe_count }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow text-center">
+<div class="card-body">
+
+<h5>Fraud Rate</h5>
+
+{% if transactions|length > 0 %}
+<h3 class="text-warning">
+{{ ((fraud_count / transactions|length) * 100) | round(2) }} %
+</h3>
+{% else %}
+<h3>0%</h3>
+{% endif %}
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+<!-- ================= CHART GRID ================= -->
+
+<div class="row">
+
+<!-- PIE -->
+
+<div class="col-md-6 mb-4">
+<div class="card shadow">
+<div class="card-body">
+
+<h5>Fraud vs Safe Transactions</h5>
+<canvas id="pieChart"></canvas>
+
+</div>
+</div>
+</div>
+
+
+<!-- DONUT -->
+
+<div class="col-md-6 mb-4">
+<div class="card shadow">
+<div class="card-body">
+
+<h5>Fraud Risk Distribution</h5>
+<canvas id="riskChart"></canvas>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+<div class="row">
+
+<!-- BAR -->
+
+<div class="col-md-6 mb-4">
+<div class="card shadow">
+<div class="card-body">
+
+<h5>Fraud by Location</h5>
+<canvas id="locationChart"></canvas>
+
+</div>
+</div>
+</div>
+
+
+<!-- LINE -->
+
+<div class="col-md-6 mb-4">
+<div class="card shadow">
+<div class="card-body">
+
+<h5>Fraud Trend Over Time</h5>
+<canvas id="trendChart"></canvas>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+<!-- ================= TRANSACTIONS TABLE ================= -->
+
+<div class="card shadow">
+
+<div class="card-body">
+
+<h4 class="mb-3">Recent Transactions</h4>
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-dark">
+
+<tr>
+<th>ID</th>
+<th>Amount</th>
+<th>Location</th>
+<th>Risk</th>
+<th>Decision</th>
+<th>Date</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for t in transactions[:10] %}
+
+<tr>
+
+<td>{{ t.id }}</td>
+
+<td>₹ {{ t.amount }}</td>
+
+<td>{{ t.location }}</td>
+
+<td>
+
+{% if t.risk == "High Risk" %}
+<span class="badge bg-danger">High</span>
+
+{% elif t.risk == "Medium Risk" %}
+<span class="badge bg-warning text-dark">Medium</span>
+
+{% else %}
+<span class="badge bg-success">Low</span>
+{% endif %}
+
+</td>
+
+<td>{{ t.decision }}</td>
+
+<td>{{ t.created_at }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= CHART.JS ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+/* ================= PIE CHART ================= */
+
+new Chart(document.getElementById("pieChart"), {
+
+type: "pie",
+
+data: {
+
+labels: ["Fraud", "Safe"],
+
+datasets: [{
+data: [{{ fraud_count }}, {{ safe_count }}],
+backgroundColor: [
+"#dc2626",
+"#16a34a"
+]
+}]
+
+},
+
+options:{
+responsive:true
+}
+
+});
+
+
+
+/* ================= DONUT CHART ================= */
+
+new Chart(document.getElementById("riskChart"), {
+
+type: "doughnut",
+
+data: {
+
+labels: ["High Risk", "Medium Risk", "Low Risk"],
+
+datasets: [{
+
+data: [{{ high_risk }}, {{ medium_risk }}, {{ low_risk }}],
+
+backgroundColor: [
+
+"#dc2626",
+"#f59e0b",
+"#16a34a"
+
+]
+
+}]
+
+},
+
+options:{
+responsive:true
+}
+
+});
+
+
+
+/* ================= BAR CHART ================= */
+
+new Chart(document.getElementById("locationChart"), {
+
+type: "bar",
+
+data: {
+
+labels: {{ location_labels | tojson }},
+
+datasets: [{
+
+label: "Transactions",
+
+data: {{ location_values | tojson }},
+
+backgroundColor: "#2563eb"
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+scales:{
+
+y:{
+beginAtZero:true
+}
+
+}
+
+}
+
+});
+
+
+
+/* ================= LINE CHART ================= */
+
+new Chart(document.getElementById("trendChart"), {
+
+type: "line",
+
+data: {
+
+labels: {{ trend_labels | tojson }},
+
+datasets: [{
+
+label: "Transactions",
+
+data: {{ trend_values | tojson }},
+
+borderColor: "#dc2626",
+
+fill:false,
+
+tension:0.3
+
+}]
+
+},
+
+options:{
+responsive:true
+}
+
+});
+
+</script>
+
+{% endblock %}

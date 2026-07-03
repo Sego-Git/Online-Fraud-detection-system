@@ -1,0 +1,273 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Real-Time Transaction Analysis</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    <input type="number"
+                           step="0.01"
+                           name="amount"
+                           class="form-control form-control-lg"
+                           placeholder="Enter transaction amount"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input type="text"
+                           name="location"
+                           class="form-control form-control-lg"
+                           placeholder="Enter location"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Device</label>
+
+                    <select name="device"
+                            class="form-select form-select-lg"
+                            required>
+
+                        <option value="Mobile">Mobile</option>
+                        <option value="Desktop">Desktop</option>
+                        <option value="Tablet">Tablet</option>
+                        <option value="Other">Other</option>
+
+                    </select>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary btn-lg w-100">
+
+                    Analyze Transaction
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- POPUP MODAL -->
+{% if show_popup %}
+
+<div class="modal-overlay">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h4>Fraud Detection Result</h4>
+        </div>
+
+        <div class="modal-body">
+
+            <p class="result-text">
+                Fraud Probability:
+                <span class="highlight">{{ fraud_probability }}%</span>
+            </p>
+
+            <p class="result-text">
+                Risk Level:
+                <span class="
+                    {% if risk == 'Low Risk' %}
+                        text-success
+                    {% elif risk == 'Medium Risk' %}
+                        text-warning
+                    {% else %}
+                        text-danger
+                    {% endif %}
+                ">
+                    {{ risk }}
+                </span>
+            </p>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <form method="POST"
+                  action="{{ url_for('save_transaction_decision') }}">
+
+                <button type="submit"
+                        name="decision"
+                        value="Accept"
+                        class="btn btn-success btn-action">
+
+                    Accept
+
+                </button>
+
+                <button type="submit"
+                        name="decision"
+                        value="Investigate"
+                        class="btn btn-warning btn-action">
+
+                    Investigate
+
+                </button>
+
+                <button type="submit"
+                        name="decision"
+                        value="Block"
+                        class="btn btn-danger btn-action">
+
+                    Block
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- OPTIONAL RESULT DISPLAY -->
+{% if result %}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <h5 class="card-title">Transaction Saved</h5>
+
+            <p><strong>Amount:</strong> {{ result.amount }}</p>
+
+            <p><strong>Location:</strong> {{ result.location }}</p>
+
+            <p><strong>Device:</strong> {{ result.device }}</p>
+
+            <p>
+                <strong>Fraud Probability:</strong>
+                {{ (result.fraud_probability*100)|round(2) }}%
+            </p>
+
+            <p><strong>Risk:</strong> {{ result.risk }}</p>
+
+            <p><strong>Decision:</strong> {{ result.decision }}</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- MODAL STYLE -->
+<style>
+
+.modal-overlay {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+
+}
+
+.modal-box {
+
+    background: white;
+    width: 420px;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    animation: popupFade 0.3s ease;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+
+}
+
+.modal-header {
+
+    text-align: center;
+    margin-bottom: 15px;
+
+}
+
+.modal-body {
+
+    text-align: center;
+    margin-bottom: 20px;
+
+}
+
+.result-text {
+
+    font-size: 18px;
+    margin: 10px 0;
+
+}
+
+.highlight {
+
+    font-weight: bold;
+    font-size: 22px;
+    color: #007bff;
+
+}
+
+.modal-footer {
+
+    text-align: center;
+
+}
+
+.btn-action {
+
+    width: 110px;
+    margin: 5px;
+
+}
+
+@keyframes popupFade {
+
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h3 class="fw-bold text-danger mb-3">
+    🚨 High-Risk Transactions ({{ count }})
+  </h3>
+
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Fraud Probability</th>
+        <th>Risk</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tx in rows %}
+      <tr class="table-danger">
+        <td>{{ loop.index }}</td>
+        <td>{{ (tx.fraud_probability * 100) | round(2) }}%</td>
+        <td>{{ tx.risk }}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-dark">
+            Explain
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock %}

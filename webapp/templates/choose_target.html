@@ -1,0 +1,21 @@
+<!-- webapp/templates/choose_target.html -->
+{% extends "layout.html" %}
+{% block content %}
+<h3>Select Target Column</h3>
+<p>Your uploaded CSV has columns:</p>
+<ul>
+  {% for col in columns %}
+    <li>{{ col }}</li>
+  {% endfor %}
+</ul>
+
+<form method="post" action="{{ url_for('dynamic_train') }}">
+  <label for="target_column">Which column is the target (label)?</label>
+  <select name="target_column" id="target_column" class="form-select">
+    {% for col in columns %}
+      <option value="{{ col }}">{{ col }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-primary mt-3">Train Model & Predict</button>
+</form>
+{% endblock %}

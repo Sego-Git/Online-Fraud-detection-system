@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+  <!-- HEADER -->
+  <div class="card shadow-lg border-0 mb-4">
+    <div class="card-body">
+      <h2 class="mb-3">
+        🔎 Transaction Analysis Report
+      </h2>
+      <p class="text-muted">
+        Transaction ID: {{ transaction.id }}
+      </p>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="row">
+
+    <!-- LEFT SIDE -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <strong>📋 Transaction Details</strong>
+        </div>
+        <div class="card-body">
+          <p><strong>Amount:</strong> ${{ transaction.amount }}</p>
+          <p><strong>Location:</strong> {{ transaction.location }}</p>
+          <p><strong>Device:</strong> {{ transaction.device }}</p>
+          <p><strong>Timestamp:</strong> {{ transaction.timestamp }}</p>
+          <p><strong>Created At:</strong> {{ transaction.created_at }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <strong>🤖 AI Risk Evaluation</strong>
+        </div>
+        <div class="card-body">
+
+          <h4>
+            Fraud Probability:
+            <span class="badge bg-dark">
+              {{ (transaction.fraud_probability * 100) | round(2) }}%
+            </span>
+          </h4>
+
+          <hr>
+
+          {% if transaction.risk == "High" %}
+            <span class="badge bg-danger p-2">HIGH RISK</span>
+          {% elif transaction.risk == "Medium" %}
+            <span class="badge bg-warning text-dark p-2">MEDIUM RISK</span>
+          {% else %}
+            <span class="badge bg-success p-2">LOW RISK</span>
+          {% endif %}
+
+          <br><br>
+
+          <h5>Decision</h5>
+          {% if transaction.decision == "BLOCKED" %}
+            <p class="text-danger fw-bold">🚨 Transaction Blocked</p>
+          {% elif transaction.decision == "REVIEW" %}
+            <p class="text-warning fw-bold">⚠ Requires Manual Review</p>
+          {% else %}
+            <p class="text-success fw-bold">{{ transaction.decision }}</p>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EXPLANATION SECTION -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <strong>🧠 Risk Explanation</strong>
+    </div>
+    <div class="card-body">
+
+      {% if transaction.reason %}
+        <ul class="list-group">
+          {% for reason in transaction.reason.split('|') %}
+            <li class="list-group-item list-group-item-danger">
+              {{ reason }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No specific risk factors detected.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- ACTION RECOMMENDATION -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <strong>📌 Recommended Action</strong>
+    </div>
+    <div class="card-body">
+
+      {% if transaction.risk == "High" %}
+        <p class="text-danger">
+          Immediate investigation required. Verify user identity and freeze account if necessary.
+        </p>
+      {% elif transaction.risk == "Medium" %}
+        <p class="text-warning">
+          Monitor activity closely and request additional authentication.
+        </p>
+      {% else %}
+        <p class="text-success">
+          No action required. Transaction appears legitimate.
+        </p>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <a href="{{ url_for('account') }}" class="btn btn-secondary">
+    ⬅ Back to Dashboard
+  </a>
+
+</div>
+
+{% endblock %}

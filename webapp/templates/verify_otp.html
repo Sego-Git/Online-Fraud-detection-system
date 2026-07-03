@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>🔐 OTP Verification</h3>
+
+<form method="post">
+  <input
+    type="text"
+    name="otp"
+    class="form-control"
+    placeholder="Enter 6-digit OTP"
+    required
+  >
+  <button class="btn btn-primary mt-3">Verify</button>
+</form>
+{% endblock %}

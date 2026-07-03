@@ -1,0 +1,69 @@
+# Large files
+webapp/instance/
+data/uploads/
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+.env
+
+.venv/
+venv/
+env/
+webapp/.env
+.env
+*.db
+data/uploads/
+__pycache__/
+*.pyc
+*.pkl
+
+# ML model files
+*.pkl
+*.h5
+*.model
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project-specific large directories
+# Ignore raw and processed datasets and any CSVs under data
+data/raw/
+data/processed/
+data/**/*.csv
+data/*.csv
+
+# Ignore saved models and checkpoints
+models/
+models/**
+
+# Ignore instance folders and local app state
+instance/
+webapp/instance/
+
+# Editor and environment
+.vscode/
+.idea/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Git LFS tracked patterns (leave patterns here, track with `git lfs track`)
+# *.h5
+# *.pkl
+
+data/raw/
+data/processed/
+models/
+instance/
+
+data/raw/*.csv
+data/raw/
+*.env
+__pycache__/
+*.pyc
+venv/
